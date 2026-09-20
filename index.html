@@ -5,92 +5,194 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DcsDayReport</title>
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif;margin:0;padding:0}
-body{ min-height:100vh; display:flex; flex-direction:column; background:linear-gradient(135deg,#babeca,#e4e5e9); }
+*{box-sizing:border-box;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;margin:0;padding:0}
+html, body{ height: 100%; }
+body{ display:flex; flex-direction:column; background:linear-gradient(135deg,#8490c4,#8b90ce); color:#5173aa; }
 .hidden{display:none}
-header{text-align:center;padding:15px}
-.logo{ display:flex; flex-direction:column; justify-content:center; align-items:center; gap:5px; }
-.logo img{height:80px;width:auto;}
-.logo span{ font-size:24px; font-weight:bold; color:#1f09e8; text-align:center; }
-.container{ max-width:500px; width:95%; margin:10px auto; padding:5px; display:flex; flex-direction:column; gap:10px; text-align:left; }
-.home-buttons{ display:flex; flex-direction:row; gap:10px; justify-content:center; flex-wrap:wrap; }
-.card{ background:#ffffffee; border-radius:12px; padding:12px; box-shadow:0 3px 8px rgba(0,0,0,.2); flex:1; text-align:center; }
-label{ font-weight:bold; font-size:14px; margin-bottom:2px; display:block; text-align:left; }
-input,select{ width:100%; padding:14px; margin:5px 0 8px; border-radius:8px; border:1px solid #bbb; font-size:16px; text-align:left; box-shadow:inset 0 2px 4px rgba(0,0,0,0.1); }
-.btn{ width:100%; padding:14px; border:none; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer; margin:5px 0; box-shadow:0 2px 4px rgba(0,0,0,0.3); text-align:center; }
-.btn-small{ padding:12px; font-size:14px; }
-.blue{background:rgb(25, 224, 68);color:#fff}
-.red{background:#f81520;color:#fff}
-.green{background:#221fd4;color:#fff}
-.success{ color:#13cf13; font-weight:bold; margin-top:8px; text-align:center; font-size:17px; }
-footer{ background:#babdc5; color:#0e0d0d; text-align:center; font-weight:bold; padding:10px; font-size:14px; margin-top:auto; position:relative; }
-footer span{color:red;font-weight:bold}
-@media(max-width:480px){
- .logo span{font-size:20px}
- input,select{font-size:14px;padding:12px;}
- .btn{font-size:14px;padding:12px;}
+
+header{padding:12px 20px 5px; flex-shrink: 0; position: relative; display: flex; justify-content: space-between; align-items: center;}
+
+/* Logo on Left Corner and Titles Centered */
+.header-left img { height: 85px; width: auto; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.08)); }
+.header-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; text-align: center; }
+.header-center .h1 { font-size: 30px; font-weight: 700; font-weight:bold; color: #0d0b5c; }
+.header-center .h2 { font-size: 22px; font-weight: 800; color: #1b0980; }
+.header-center .h3 { font-size: 20px; font-weight: 600; font-weight:bold; color: #d80416; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Right-side live system clock (45px font) on Home Page Header */
+.live-clock {
+  font-size: 40px;
+  font-weight: 800;
+  color: #dc2626;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.main-content { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 8px; overflow-y: auto; }
+.container{ max-width:800px; width:95%; margin:0 auto; padding:4px; display:flex; flex-direction:column; gap:8px; text-align:left; }
+
+/* Home Dashboard */
+.home-wrapper{ display:grid; grid-template-columns: 1fr 1fr; gap:15px; width: 100%; max-width: 650px; margin: auto; }
+.home-card{ background:#ffffff; border-radius:16px; padding:25px 15px; box-shadow:0 8px 20px rgba(0,0,0,0.05); display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px; border-top:6px solid #2563eb; transition:all 0.2s ease; cursor:pointer; }
+.home-card:hover{ transform:translateY(-3px); box-shadow:0 12px 25px rgba(0,0,0,0.1); }
+.home-card.reupdate-card{ border-top-color: #dc2626; }
+.home-icon{ font-size:38px; margin-bottom:2px; }
+.home-info h3{ font-size:17px; color:#1e293b; font-weight:700; }
+.home-info p{ font-size:11px; color:#64748b; margin-top:3px; line-height:1.3; }
+
+.card{ background:#ffffff; border-radius:12px; padding:15px; box-shadow:0 4px 15px rgba(0,0,0,0.04); flex:1; text-align:center; border:1px solid #e2e8f0; width: 100%; }
+
+/* Compact Form Layout */
+.form-scroll{ max-height: 58vh; overflow-y: auto; padding-right: 6px; display: flex; flex-direction: column; gap: 10px; }
+.form-section { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; }
+.form-section-title { font-size: 11px; font-weight: 700; color: #2563eb; margin-bottom: 8px; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; padding-bottom: 3px; text-align: left; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.form-group { display: flex; flex-direction: column; text-align: left; }
+
+#reedit .card {
+  text-align: left !important;
+}
+
+label{ font-weight:600; font-size:11px; margin-bottom:1px; color:#475569; display: block; text-align: left; }
+input,select{ width:100%; padding:8px 10px; margin:1px 0 8px 0; border-radius:6px; border:1px solid #cbd5e1; font-size:13px; text-align:left; background:#fff; box-shadow:inset 0 1px 2px rgba(0,0,0,0.03); transition:all 0.15s; }
+input:focus, select:focus{ border-color:#2563eb; outline:none; box-shadow:0 0 0 3px rgba(37,99,235,0.12); }
+
+.btn{ width:100%; padding:11px; border:none; border-radius:6px; font-size:14px; font-weight:bold; cursor:pointer; margin:4px 0; box-shadow:0 3px 8px rgba(0,0,0,0.08); text-align:center; transition:all 0.15s; }
+.btn:active{transform:scale(0.98);}
+.btn-small{ padding:10px; font-size:13px; }
+.blue{background:#2563eb;color:#fff}
+.blue:hover{background:#1d4ed8;}
+.red{background:#dc2626;color:#fff}
+.red:hover{background:#b91c1c;}
+.green{background:#16a34a;color:#fff}
+.green:hover{background:#15803d;}
+
+.success{ color:#16a34a; font-weight:bold; margin-top:5px; text-align:center; font-size:13px; }
+.loading{ color:#ca8a04; font-weight:bold; text-align:center; font-size:12px; margin:3px 0; }
+
+/* Fixed Footer at Bottom */
+footer{ background:#0f172a; color:#94a3b8; text-align:center; font-weight:500; padding:10px; font-size:11px; flex-shrink: 0; width: 100%; box-shadow:0 -4px 8px rgba(48, 50, 197, 0.05); }
+footer span{color:#f87171;font-weight:bold}
+
+@media(max-width:768px){
+ .home-wrapper { grid-template-columns: 1fr; gap: 10px; max-width: 100%; }
+ .form-grid { grid-template-columns: 1fr; } 
+ input,select{font-size:13px;padding:8px;}
  .card{padding:10px;}
- .home-buttons{flex-direction:column;}
+ .live-clock { font-size: 24px !important; }
+ header { flex-direction: column; gap: 8px; text-align: center; }
+ .header-center { position: static; transform: none; }
+ .header-left { display: flex; justify-content: center; width: 100%; }
 }
 </style>
 </head>
-<body>
+<body onload="initClock()">
 
 <!-- HOME -->
-<div id="home">
+<div id="home" style="display:flex; flex-direction:column; height:100%;">
 <header>
- <div class="logo">
+ <div class="header-left">
   <img src="dayreportapp.png" alt="Logo">
-  <span>DcsDayReport</span>
  </div>
+ <div class="header-center">
+  <div class="h1">Nepal Electricity Authority</div>
+  <div class="h2">Dcs Day Report</div>
+  <div class="h3">Dcs Data Collection</div>
+ </div>
+ <div class="live-clock" id="liveClock">00:00:00 AM</div>
 </header>
-<div class="container home-buttons">
- <div class="card"><button class="btn blue btn-small" onclick="go('entry')">Data Entry</button></div>
- <div class="card"><button class="btn red btn-small" onclick="go('reedit')">Data Re-Update</button></div>
+<div class="main-content">
+ <div class="home-wrapper">
+  <div class="home-card" onclick="go('entry')">
+   <div class="home-icon">📝</div>
+   <div class="home-info">
+    <h3>Data Entry</h3>
+    <p>नयाँ दैनिक रिपोर्ट विवरण प्रविष्ट गर्नुहोस्</p>
+   </div>
+   <button class="btn blue btn-small" style="width:auto; padding:7px 20px; margin:0;">Entry Now</button>
+  </div>
+
+  <div class="home-card reupdate-card" onclick="go('reedit')">
+   <div class="home-icon">🔄</div>
+   <div class="home-info">
+    <h3>Data Re-Update</h3>
+    <p>पुरानो डाटा खोजेर हेर्न वा सच्याउनुहोस्</p>
+   </div>
+   <button class="btn red btn-small" style="width:auto; padding:7px 20px; margin:0;">Update Now</button>
+  </div>
+ </div>
 </div>
 <footer> System Developed By: Dharan Dcs Team<br> <span>Contact: 9842459642</span> </footer>
 </div>
 
 <!-- DATA ENTRY -->
-<div id="entry" class="hidden">
-<header><div class="logo"><span>Data Entry</span></div></header>
-<div class="container card" id="entryForm"></div>
-<div class="container">
- <button class="btn green btn-small" onclick="submitEntry()">Submit</button>
- <div id="entryMsg" class="success"></div>
- <button class="btn red btn-small" onclick="go('home')">Back</button>
+<div id="entry" class="hidden" style="display:none; flex-direction:column; height:100%;">
+<header style="justify-content:center;">
+ <div class="header-center" style="position:static; transform:none;">
+  <div class="h2" style="font-size:18px;">Data Entry</div>
+  <div class="h3">New Report Submission</div>
+ </div>
+</header>
+<div class="main-content">
+ <div class="container card">
+  <div id="entryForm" class="form-scroll"></div>
+ </div>
+ <div class="container" style="padding-top:0;">
+  <button class="btn green btn-small" id="submitBtn" onclick="submitEntry()">Submit Data</button>
+  <div id="entryMsg" class="success"></div>
+  <div id="entryLoading" class="loading"></div>
+  <button class="btn red btn-small" onclick="go('home')">Back to Home</button>
+ </div>
 </div>
 <footer> System Developed By: Dharan Dcs Team<br> <span>Contact: 9842459642</span> </footer>
 </div>
 
 <!-- REEDIT -->
-<div id="reedit" class="hidden">
-<header><div class="logo"><span>Data Re-Update</span></div></header>
-<div class="container card">
- <label>मिति</label>
- <input id="sDate">
- <label>वितरण केन्द्रकाे नाम</label>
- <input list="dcsList" id="sDcs" required>
- <datalist id="dcsList"></datalist>
- <label>Security Code</label>
- <input id="sSec" type="password">
- <button class="btn blue btn-small" onclick="searchData()">Search</button>
-</div>
-<div class="container" id="resultBox"></div>
-<div class="container">
- <button class="btn red btn-small" onclick="go('home')">Back</button>
+<div id="reedit" class="hidden" style="display:none; flex-direction:column; height:100%;">
+<header style="justify-content:center;">
+ <div class="header-center" style="position:static; transform:none;">
+  <div class="h2" style="font-size:18px;">Data Re-Update</div>
+  <div class="h3">Search & Modify Record</div>
+ </div>
+</header>
+<div class="main-content">
+ <div class="container card">
+  <label>मिति</label>
+  <input id="sDate" placeholder="YYYY.MM.DD">
+  <label>वितरण केन्द्रकाे नाम</label>
+  <input list="dcsList" id="sDcs" required placeholder="वितरण केन्द्र छान्नुहोस्">
+  <datalist id="dcsList"></datalist>
+  <label>Security Code</label>
+  <input id="sSec" type="password" placeholder="Security Code राख्नुहोस्">
+  <button class="btn blue btn-small" onclick="searchData()">Search Data</button>
+  <div id="searchLoading" class="loading"></div>
+ </div>
+ <div class="container" id="resultBox"></div>
+ <div class="container" style="padding-top:0;">
+  <button class="btn red btn-small" onclick="go('home')">Back to Home</button>
+ </div>
 </div>
 <footer> System Developed By: Dharan Dcs Team<br> <span>Contact: 9842459642</span> </footer>
 </div>
 
 <!-- EDIT -->
-<div id="edit" class="hidden">
-<header><div class="logo"><span>Edit Data</span></div></header>
-<div class="container card" id="editForm"></div>
-<div class="container">
- <button class="btn green btn-small" onclick="submitEdit()">Submit Edit</button>
- <div id="editMsg" class="success"></div>
- <button class="btn red btn-small" onclick="go('reedit')">Back</button>
+<div id="edit" class="hidden" style="display:none; flex-direction:column; height:100%;">
+<header style="justify-content:center;">
+ <div class="header-center" style="position:static; transform:none;">
+  <div class="h2" style="font-size:18px;">Edit Data</div>
+  <div class="h3">Modify Existing Entry</div>
+ </div>
+</header>
+<div class="main-content">
+ <div class="container card">
+  <div id="editForm" class="form-scroll"></div>
+ </div>
+ <div class="container" style="padding-top:0;">
+  <button class="btn green btn-small" id="updateBtn" onclick="submitEdit()">Submit Edit</button>
+  <div id="editMsg" class="success"></div>
+  <div id="editLoading" class="loading"></div>
+  <button class="btn red btn-small" onclick="go('reedit')">Back</button>
+ </div>
 </div>
 <footer> System Developed By: Dharan Dcs Team<br> <span>Contact: 9842459642</span> </footer>
 </div>
@@ -100,21 +202,14 @@ const scriptUrl="https://script.google.com/macros/s/AKfycbxmJsKeMD4PgwWI4WLSMUSG
 
 const headers=[
 "ला_का_सख्या","ला_का_रकम","रि_क_सख्या","रि_क_असुलि_रकम","Reconnections बापत उठेको सेवा सुल्क रकम",
-"नयाँ_ग्राहक_कायम_लगत_सख्या_सिङ्गल_फेज",
-"नयाँ_ग्राहक_कायम_लगत_सख्या_थ्री_फेज",
-"मिटर_बदलि_सख्या_सिङ्गल_फेज",
-"मिटर_बदलि_सख्या_थ्री_फेज",
-"औसत_युनिट","औसत_रकम",
-"कालोपाटि_असुलि_सख्या","कालोपाटि_असुलि_रकम",
-"सिस्टममा_लिङ्क_भयको_लगत_फाईल_सख्या",
-"क्षमता_बृद्दि_सख्या",
-"रिसिलिङ् भयकाे स‌ख्या",
-"रिसिलिङ् बाट सुधार भयकाे स‌ख्या",
-"मिटर रिडिङ्ग छड्के गरियकाे स‌ख्या",
-"मिटर रिडिङ्ग छड्के बाट भेटियकाे कैफियत स‌ख्या",
+"नयाँ_ग्राहक_कायम_लगत_सख्या_सिङ्गल_फेज","नयाँ_ग्राहक_कायम_लगत_सख्या_थ्री_फेज",
+"मिटर_बदलि_सख्या_सिङ्गल_फेज","मिटर_बदलि_सख्या_थ्री_फेज",
+"औसत_युनिट","औसत_रकम","कालोपाटि_असुलि_सख्या","कालोपाटि_असुलि_रकम",
+"सिस्टममा_लिङ्क_भयको_लगत_फाईल_सख्या","क्षमता_बृद्दि_सख्या",
+"रिसिलिङ् भयकाे स‌ख्या","रिसिलिङ् बाट सुधार भयकाे स‌ख्या",
+"मिटर रिडिङ्ग छड्के गरियकाे स‌ख्या","मिटर रिडिङ्ग छड्के बाट भेटियकाे कैफियत स‌ख्या",
 "मिटर रिडिङ्ग छड्के बाट भेटियकाे कैफियतकाे विवरण",
-"चुवावट भेटियकाे वा समातियकाे स‌ख्या",
-"चुवावट बाट असुल गरियकाे रकम",
+"चुवावट भेटियकाे वा समातियकाे स‌ख्या","चुवावट बाट असुल गरियकाे रकम",
 "वितरण केन्द्रकाे नाम","Security Code","मिति"
 ];
 
@@ -126,78 +221,176 @@ const dcsList=[
 "DiktelDcs","RangeliDcs","BelbariDCs","DhulabariDcs"
 ];
 
-const securityMap={
-"DharanDcs":"D@11","BiratnagarDcs":"@B1","DuhabiDcs":"#25","TaplejungDcs":"@123",
-"KhadbariDcs":"c12@","DhankutaDcs":"#c123","TerhathumDcs":"@15@",
-"PachatharDcs":"R@25","OkhaldhungaDcs":"@235d","BhojpurDcs":"a$125",
-"InaruwaDcs":"q@254","ItahariDcs":"u#12","DamakDcs":"d@254",
-"UrlabariDcs":"t$25","SolukhumbuDcs":"w@21","UdayapurDcs":"S@254",
-"bhadrapurDcs":"$85","AnarmaniDcs":"Q100","IlamDcs":"Qd123",
-"GauradahaDcs":"WDF1","DiktelDcs":"Q##","RangeliDcs":"Q/1",
-"BelbariDCs":"#251","DhulabariDcs":"!12@"
-};
-
 let editRow={};
 
+function initClock() {
+  function updateClock() {
+    const now = new Date();
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    let seconds = now.getSeconds();
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+    const timeString = `${hours}:${minutes}:${seconds} ${ampm}`;
+    const clockEl = document.getElementById("liveClock");
+    if(clockEl) clockEl.innerText = timeString;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+}
+
 function go(id){
-["home","entry","reedit","edit"].forEach(x=>document.getElementById(x).classList.add("hidden"));
-document.getElementById(id).classList.remove("hidden");
+["home","entry","reedit","edit"].forEach(x=>{
+  let el = document.getElementById(x);
+  if(el){ el.classList.add("hidden"); el.style.display="none"; }
+});
+let target = document.getElementById(id);
+if(target){ target.classList.remove("hidden"); target.style.display="flex"; }
 }
 
 function buildEntry(){
-const f=document.getElementById("entryForm"); f.innerHTML="";
-headers.forEach(h=>{
- if(h==="वितरण केन्द्रकाे नाम"){
-  f.innerHTML+=`<label>${h}</label><input list='dcsList' id='e_${h}' required>`;
- } else if(h==="Security Code"){
-  f.innerHTML+=`<label>${h}</label><input id='e_${h}' type='password' required>`;
- } else{
-  f.innerHTML+=`<label>${h}</label><input id="e_${h}">`;
- }
-});
+  const f = document.getElementById("entryForm"); 
+  f.innerHTML = "";
+  
+  const sections = [
+    { title: "१. आधारभूत विवरण (Basic Info)", items: ["वितरण केन्द्रकाे नाम", "Security Code", "मिति"] },
+    { title: "२. लाइन काट्ने तथा रिकनेक्सन (Line & Reconnection)", items: ["ला_का_सख्या", "ला_का_रकम", "रि_क_सख्या", "रि_क_असुलि_रकम", "Reconnections बापत उठेको सेवा सुल्क रकम"] },
+    { title: "३. नयाँ ग्राहक तथा मिटर फेरबदल (New Connection & Meter)", items: ["नयाँ_ग्राहक_कायम_लगत_सख्या_सिङ्गल_फेज", "नयाँ_ग्राहक_कायम_लगत_सख्या_थ्री_फेज", "मिटर_बदलि_सख्या_सिङ्गल_फेज", "मिटर_बदलि_सख्या_थ्री_फेज", "क्षमता_बृद्दि_सख्या"] },
+    { title: "४. औसत बिलिङ तथा कालोपाटी (Billing & Blacklist)", items: ["औसत_युनिट", "औसत_रकम", "कालोपाटि_असुलि_सख्या", "कालोपाटि_असुलि_रकम", "सिस्टममा_लिङ्क_भयको_लगत_फाईल_सख्या"] },
+    { title: "५. रिसिलिङ्ग विवरण (Resealing)", items: ["रिसिलिङ् भयकाे स‌ख्या", "रिसिलिङ् बाट सुधार भयकाे स‌ख्या"] },
+    { title: "६. छड्के तथा चुहावट नियन्त्रण (Inspection & Leakage)", items: ["मिटर रिडिङ्ग छड्के गरियकाे स‌ख्या", "मिटर रिडिङ्ग छड्के बाट भेटियकाे कैफियत स‌ख्या", "मिटर रिडिङ्ग छड्के बाट भेटियकाे कैफियतकाे विवरण", "चुवावट भेटियकाे वा समातियकाे स‌ख्या", "चुवावट बाट असुल गरियकाे रकम"] }
+  ];
+
+  sections.forEach(sec => {
+    let secDiv = document.createElement("div");
+    secDiv.className = "form-section";
+    secDiv.innerHTML = `<div class="form-section-title">${sec.title}</div>`;
+    
+    let gridDiv = document.createElement("div");
+    gridDiv.className = "form-grid";
+
+    sec.items.forEach(h => {
+      let groupDiv = document.createElement("div");
+      groupDiv.className = "form-group";
+      
+      if(h==="वितरण केन्द्रकाे नाम"){
+        groupDiv.innerHTML = `<label>${h}</label><input list='dcsList' id='e_${h}' required placeholder='केन्द्र छान्नुहोस्'>`;
+      } else if(h==="Security Code"){
+        groupDiv.innerHTML = `<label>${h}</label><input id='e_${h}' type='password' required placeholder='कोड राख्नुहोस्'>`;
+      } else if(h==="मिति"){
+        groupDiv.innerHTML = `<label>${h}</label><input id='e_${h}' placeholder='YYYY.MM.DD'>`;
+      } else if(h==="मिटर रिडिङ्ग छड्के बाट भेटियकाे कैफियतकाे विवरण"){
+        groupDiv.style.gridColumn = "span 2";
+        groupDiv.innerHTML = `<label>${h}</label><input id="e_${h}" type="text" placeholder="विवरण लेख्नुहोस्">`;
+      } else {
+        groupDiv.innerHTML = `<label>${h}</label><input id="e_${h}" type="text" placeholder="0">`;
+      }
+      gridDiv.appendChild(groupDiv);
+    });
+
+    secDiv.appendChild(gridDiv);
+    f.appendChild(secDiv);
+  });
 }
+
 buildEntry();
 dcsList.forEach(d=>document.getElementById("dcsList").innerHTML+=`<option value="${d}">`);
 
-function submitEntry(){
-  const date = document.getElementById("e_मिति").value;
-  const dcs = document.getElementById("e_वितरण केन्द्रकाे नाम").value;
-  const sec = document.getElementById("e_Security Code").value;
+function normalize(d){ return d ? d.replace(/[./]/g,'-').trim() : ''; }
 
-  if(dcs.trim()===""){ alert("कृपया वितरण केन्द्रकाे नाम चयन गर्नुहोस्"); return; }
-  if(!sec.trim()){ alert("कृपया Security Code भर्नुहोस्"); return; }
-  if(securityMap[dcs]!==sec){ alert("Security Code गलत छ"); return; }
+async function submitEntry(){
+  const date = document.getElementById("e_मिति").value.trim();
+  const dcs = document.getElementById("e_वितरण केन्द्रकाे नाम").value.trim();
+  const sec = document.getElementById("e_Security Code").value.trim();
+
+  if(!dcs){ alert("कृपया वितरण केन्द्रकाे नाम चयन गर्नुहोस्"); return; }
+  if(!sec){ alert("कृपया Security Code भर्नुहोस्"); return; }
   if(!/^\d{4}\.\d{2}\.\d{2}$/.test(date)){ alert("मिति yyyy.mm.dd format मा राख्नुहोस्"); return; }
 
-  const fd=new FormData();
-  headers.forEach(h=>fd.append(h,document.getElementById("e_"+h).value));
+  document.getElementById("entryLoading").innerText = "Checking existing records...";
+  document.getElementById("entryMsg").innerText = "";
 
-  fetch(scriptUrl,{method:"POST",body:fd})
-    .then(()=> {
-      document.getElementById("entryMsg").innerText="✔ Data Submitted Successfully";
-      headers.forEach(h=>document.getElementById("e_"+h).value="");
+  try {
+    const checkRes = await fetch(scriptUrl + "?nocache=" + new Date().getTime());
+    const allData = await checkRes.json();
+    
+    const duplicate = allData.find(rw => 
+      normalize(rw["मिति"]) === normalize(date) &&
+      normalize(rw["वितरण केन्द्रकाे नाम"]) === normalize(dcs)
+    );
+
+    if (duplicate) {
+      document.getElementById("entryLoading").innerText = "";
+      alert(`यो मिति (${date}) र वितरण केन्द्रको डाटा पहिले नै सुरक्षित भइसकेको छ! कृपया Re-Update प्रयोग गर्नुहोस्।`);
+      return;
+    }
+
+    document.getElementById("entryLoading").innerText = "Submitting...";
+
+    const fd=new FormData();
+    headers.forEach(h=>{
+      let el = document.getElementById("e_"+h);
+      fd.append(h, el ? el.value : "");
     });
+
+    const res = await fetch(scriptUrl, {method:"POST", body:fd});
+    const resultText = await res.text();
+    
+    document.getElementById("entryLoading").innerText = "";
+
+    if(resultText.includes("INVALID_SEC")) {
+      alert("Security Code गलत छ!");
+      return;
+    }
+
+    document.getElementById("entryMsg").innerText="✔ Submitted Successfully!";
+    headers.forEach(h=> {
+      let el = document.getElementById("e_"+h);
+      if(el) el.value="";
+    });
+
+  } catch(err) {
+    document.getElementById("entryLoading").innerText = "";
+    alert("Network error. Please try again.");
+  }
 }
 
-function normalize(d){ return d.replace(/[./]/g,'-').trim(); }
-
 function searchData() {
-  if(!sDcs.value.trim()){ alert("कृपया सम्बन्धित वितरण केन्द्रको विवरण भर्नुहोस् ।।।"); return; }
-  if(securityMap[sDcs.value]!==sSec.value){ alert("Invalid Security Code"); return; }
-  fetch(scriptUrl)
+  const sDcsVal = document.getElementById("sDcs").value.trim();
+  const sDateVal = document.getElementById("sDate").value.trim();
+  const sSecVal = document.getElementById("sSec").value.trim();
+  const resultBox = document.getElementById("resultBox");
+
+  if(!sDcsVal){ alert("कृपया वितरण केन्द्रको नाम भर्नुहोस् ।"); return; }
+  if(!sSecVal){ alert("कृपया Security Code भर्नुहोस् ।"); return; }
+  
+  document.getElementById("searchLoading").innerText = "Searching...";
+  resultBox.innerHTML="";
+
+  fetch(scriptUrl + "?nocache=" + new Date().getTime())
   .then(r=>r.json())
   .then(all=>{
+    document.getElementById("searchLoading").innerText = "";
     const res = all.filter(rw=>
-      normalize(rw["मिति"])===normalize(sDate.value) &&
-      rw["वितरण केन्द्रकाे नाम"]===sDcs.value
+      normalize(rw["मिति"])===normalize(sDateVal) &&
+      normalize(rw["वितरण केन्द्रकाे नाम"])===sDcsVal
     );
-    resultBox.innerHTML="";
-    if(res.length===0) resultBox.innerHTML="<div class='card'>No data found</div>";
+    if(res.length===0) {
+      resultBox.innerHTML="<div class='card' style='font-size:13px; color:#dc2626;'>No data found or Invalid Details</div>";
+      return;
+    }
     res.forEach(r=>{
-      resultBox.innerHTML+=`<div class="card" onclick='openEdit(${JSON.stringify(r)})'>
-        <b>${r["मिति"]}</b> | ${r["वितरण केन्द्रकाे नाम"]}<br>Click to edit
+      resultBox.innerHTML+=`<div class="card" style="cursor:pointer; background:#f0fdf4; border-left:4px solid #16a34a; padding:10px;" onclick='openEdit(${JSON.stringify(r)})'>
+        <b>मिति: ${r["मिति"]}</b> | ${r["वितरण केन्द्रकाे नाम"]}<br><span style="color:#16a34a; font-size:11px; font-weight:600;">✏️ Click here to edit data</span>
       </div>`;
     });
+  })
+  .catch(err => {
+    document.getElementById("searchLoading").innerText = "";
+    alert("Network error. Please check your connection.");
   });
 }
 
@@ -205,18 +398,36 @@ function openEdit(r){
 editRow=r;
 const f=document.getElementById("editForm"); f.innerHTML="";
 Object.keys(r).forEach(k=>{
- f.innerHTML+=`<label>${k}</label><input id="u_${k}" value="${r[k]}">`;
+ f.innerHTML+=`<div style="display:flex; flex-direction:column; text-align:left; margin-bottom:5px;"><label style="font-weight:600; font-size:10px; color:#475569;">${k}</label><input id="u_${k}" value="${r[k] !== undefined ? r[k] : ''}" style="padding:7px; border-radius:5px; border:1px solid #cbd5e1; font-size:12px;"></div>`;
 });
 go("edit");
 }
 
 function submitEdit(){
-const fd=new FormData();
-Object.keys(editRow).forEach(k=>fd.append(k,document.getElementById("u_"+k).value));
-fetch(scriptUrl,{method:"POST",body:fd})
-.then(()=>document.getElementById("editMsg").innerText="✔ Updated Successfully");
+  document.getElementById("editLoading").innerText = "Updating...";
+  document.getElementById("editMsg").innerText = "";
+
+  const fd=new FormData();
+  Object.keys(editRow).forEach(k=>{
+    const el = document.getElementById("u_"+k);
+    if(el) fd.append(k, el.value);
+  });
+
+  fetch(scriptUrl,{method:"POST",body:fd})
+  .then(res => res.text())
+  .then(resultText=> {
+    document.getElementById("editLoading").innerText = "";
+    if(resultText.includes("INVALID_SEC")) {
+      alert("Security Code गलत छ!");
+      return;
+    }
+    document.getElementById("editMsg").innerText="✔ Updated Successfully!";
+  })
+  .catch(err => {
+    document.getElementById("editLoading").innerText = "";
+    alert("Error updating data.");
+  });
 }
 </script>
 </body>
 </html>
-
