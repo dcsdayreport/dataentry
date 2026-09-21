@@ -7,10 +7,10 @@
 <style>
 *{box-sizing:border-box;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;margin:0;padding:0}
 html, body{ height: 100%; }
-body{ display:flex; flex-direction:column; background:linear-gradient(135deg,#8490c4,#8b90ce); color:#5173aa; }
+body{ display:flex; flex-direction:column; background:linear-gradient(135deg,#c4c6d1,#aeafc0); color:#8f9db4; }
 .hidden{display:none}
 
-header{padding:12px 20px 5px; flex-shrink: 0; position: relative; display: flex; justify-content: space-between; align-items: center;}
+header{padding:12px 20px 5px; flex-shrink: 0; position: relative; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #62aeda, #6b69c2); border-bottom: 2px solid #7dd3fc; border-radius: 0 0 12px 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
 /* Logo on Left Corner and Titles Centered */
 .header-left img { height: 75px; width: auto; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.08)); }
@@ -67,8 +67,8 @@ input:focus, select:focus{ border-color:#2563eb; outline:none; box-shadow:0 0 0 
 .green{background:#16a34a;color:#fff}
 .green:hover{background:#15803d;}
 
-.success{ color:#16a34a; font-weight:bold; margin-top:5px; text-align:center; font-size:13px; }
-.loading{ color:#ca8a04; font-weight:bold; text-align:center; font-size:12px; margin:3px 0; }
+.success{ color:#16a34a; font-weight:bold; margin-top:8px; text-align:center; font-size:15px; }
+.loading{ color:#0284c7; font-weight:bold; text-align:center; font-size:15px; margin:6px 0; }
 
 /* Fixed Footer at Bottom */
 footer{ background:#0f172a; color:#94a3b8; text-align:center; font-weight:500; padding:10px; font-size:11px; flex-shrink: 0; width: 100%; box-shadow:0 -4px 8px rgba(48, 50, 197, 0.05); }
@@ -221,9 +221,19 @@ const dcsList=[
 "DiktelDcs","RangeliDcs","BelbariDCs","DhulabariDcs"
 ];
 
+const securityMap={
+"DharanDcs":"D@11","BiratnagarDcs":"@B1","DuhabiDcs":"#25","TaplejungDcs":"@123",
+"KhadbariDcs":"c12@","DhankutaDcs":"#c123","TerhathumDcs":"@15@",
+"PachatharDcs":"R@25","OkhaldhungaDcs":"@235d","BhojpurDcs":"a$125",
+"InaruwaDcs":"q@254","ItahariDcs":"u#12","DamakDcs":"d@254",
+"UrlabariDcs":"t$25","SolukhumbuDcs":"w@21","UdayapurDcs":"S@254",
+"bhadrapurDcs":"$85","AnarmaniDcs":"Q100","IlamDcs":"Qd123",
+"GauradahaDcs":"WDF1","DiktelDcs":"Q##","RangeliDcs":"Q/1",
+"BelbariDCs":"#251","DhulabariDcs":"!12@"
+};
+
 let editRow={};
 
-// Function to remove commas (,) and extra leading/trailing spaces from copied data
 function cleanData(val) {
   if (typeof val !== 'string') return val;
   return val.replace(/,/g, '').trim();
@@ -307,7 +317,6 @@ dcsList.forEach(d=>document.getElementById("dcsList").innerHTML+=`<option value=
 
 function normalize(d){ return d ? d.replace(/[./]/g,'-').trim() : ''; }
 
-// Fast submission with comma/space cleaning and CORS bypass (no-cors)
 async function submitEntry(){
   const dateField = document.getElementById("e_मिति");
   const dcsField = document.getElementById("e_वितरण केन्द्रकाे नाम");
@@ -319,10 +328,14 @@ async function submitEntry(){
 
   if(!dcs){ alert("कृपया वितरण केन्द्रकाे नाम चयन गर्नुहोस्"); return; }
   if(!sec){ alert("कृपया Security Code भर्नुहोस्"); return; }
+  if(!securityMap[dcs] || securityMap[dcs] !== sec){ alert("Security Code गलत छ!"); return; }
   if(!/^\d{4}\.\d{2}\.\d{2}$/.test(date)){ alert("मिति yyyy.mm.dd format मा राख्नुहोस्"); return; }
 
-  document.getElementById("entryLoading").innerText = "Checking existing records...";
-  document.getElementById("entryMsg").innerText = "";
+  const loadingEl = document.getElementById("entryLoading");
+  const msgEl = document.getElementById("entryMsg");
+  
+  loadingEl.innerText = "Checking existing records...";
+  msgEl.innerText = "";
 
   try {
     const checkRes = await fetch(scriptUrl + "?nocache=" + new Date().getTime());
@@ -334,12 +347,12 @@ async function submitEntry(){
     );
 
     if (duplicate) {
-      document.getElementById("entryLoading").innerText = "";
-      alert(`यो मिति (${date}) र वितरण केन्द्रको डाटा पहिले नै सुरक्षित भइसकेको छ! कृपया Re-Update प्रयोग गर्नुहोस्।`);
+      loadingEl.innerText = "";
+      alert(`⚠️यो मिति (${date}) र वितरण केन्द्रको डाटा पहिले नै सुरक्षित भइसकेको छ! कृपया Re-Update प्रयोग गर्नुहोस्।`);
       return;
     }
 
-    document.getElementById("entryLoading").innerText = "Submitting...";
+    loadingEl.innerText = "Submitting data...";
 
     const fd=new FormData();
     headers.forEach(h=>{
@@ -350,16 +363,16 @@ async function submitEntry(){
 
     await fetch(scriptUrl, {method:"POST", body:fd, mode: 'no-cors'});
     
-    document.getElementById("entryLoading").innerText = "";
-    document.getElementById("entryMsg").innerText="✔ Submitted Successfully!";
+    loadingEl.innerText = "";
+    msgEl.innerText="✔ Submitted Successfully!";
     headers.forEach(h=> {
       let el = document.getElementById("e_"+h);
-      if(el) el.value="";
+      if(el && h !== "वितरण केन्द्रकाे नाम" && h !== "Security Code") el.value="";
     });
 
   } catch(err) {
-    document.getElementById("entryLoading").innerText = "";
-    document.getElementById("entryMsg").innerText="✔ Submitted Successfully!";
+    loadingEl.innerText = "";
+    msgEl.innerText="✔ Submitted Successfully!";
   }
 }
 
@@ -371,8 +384,9 @@ function searchData() {
 
   if(!sDcsVal){ alert("कृपया वितरण केन्द्रको नाम भर्नुहोस् ।"); return; }
   if(!sSecVal){ alert("कृपया Security Code भर्नुहोस् ।"); return; }
+  if(!securityMap[sDcsVal] || securityMap[sDcsVal] !== sSecVal){ alert("Security Code गलत छ!"); return; }
   
-  document.getElementById("searchLoading").innerText = "Searching...";
+  document.getElementById("searchLoading").innerText = "Searching records...";
   resultBox.innerHTML="";
 
   fetch(scriptUrl + "?nocache=" + new Date().getTime())
@@ -384,12 +398,12 @@ function searchData() {
       normalize(rw["वितरण केन्द्रकाे नाम"])===sDcsVal
     );
     if(res.length===0) {
-      resultBox.innerHTML="<div class='card' style='font-size:13px; color:#dc2626;'>No data found or Invalid Details</div>";
+      resultBox.innerHTML="<div class='card' style='font-size:14px; color:#dc2626; font-weight:bold;'>No data found or Invalid Details</div>";
       return;
     }
     res.forEach(r=>{
-      resultBox.innerHTML+=`<div class="card" style="cursor:pointer; background:#f0fdf4; border-left:4px solid #16a34a; padding:10px;" onclick='openEdit(${JSON.stringify(r)})'>
-        <b>मिति: ${r["मिति"]}</b> | ${r["वितरण केन्द्रकाे नाम"]}<br><span style="color:#16a34a; font-size:11px; font-weight:600;">✏️ Click here to edit data</span>
+      resultBox.innerHTML+=`<div class="card" style="cursor:pointer; background:#f0fdf4; border-left:4px solid #16a34a; padding:12px;" onclick='openEdit(${JSON.stringify(r)})'>
+        <b>मिति: ${r["मिति"]}</b> | ${r["वितरण केन्द्रकाे नाम"]}<br><span style="color:#16a34a; font-size:12px; font-weight:700;">✏️ Click here to edit data</span>
       </div>`;
     });
   })
@@ -403,14 +417,14 @@ function openEdit(r){
 editRow=r;
 const f=document.getElementById("editForm"); f.innerHTML="";
 Object.keys(r).forEach(k=>{
- f.innerHTML+=`<div style="display:flex; flex-direction:column; text-align:left; margin-bottom:5px;"><label style="font-weight:600; font-size:10px; color:#475569;">${k}</label><input id="u_${k}" value="${r[k] !== undefined ? r[k] : ''}" style="padding:7px; border-radius:5px; border:1px solid #cbd5e1; font-size:12px;"></div>`;
+ fazior=`<div style="display:flex; flex-direction:column; text-align:left; margin-bottom:5px;"><label style="font-weight:600; font-size:11px; color:#475569;">${k}</label><input id="u_${k}" value="${r[k] !== undefined ? r[k] : ''}" style="padding:8px; border-radius:5px; border:1px solid #cbd5e1; font-size:13px;"></div>`;
+ f.innerHTML+=fazior;
 });
 go("edit");
 }
 
-// Super-fast edit submission with comma/space cleaning and mode: 'no-cors'
 async function submitEdit(){
-  document.getElementById("editLoading").innerText = "Updating...";
+  document.getElementById("editLoading").innerText = "Updating records...";
   document.getElementById("editMsg").innerText = "";
 
   try {
