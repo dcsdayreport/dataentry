@@ -221,22 +221,29 @@ const dcsList=[
 "DiktelDcs","RangeliDcs","BelbariDCs","DhulabariDcs"
 ];
 
-const securityMap={
-"DharanDcs":"D@11","BiratnagarDcs":"@B1","DuhabiDcs":"#25","TaplejungDcs":"@123",
-"KhadbariDcs":"c12@","DhankutaDcs":"#c123","TerhathumDcs":"@15@",
-"PachatharDcs":"R@25","OkhaldhungaDcs":"@235d","BhojpurDcs":"a$125",
-"InaruwaDcs":"q@254","ItahariDcs":"u#12","DamakDcs":"d@254",
-"UrlabariDcs":"t$25","SolukhumbuDcs":"w@21","UdayapurDcs":"S@254",
-"bhadrapurDcs":"$85","AnarmaniDcs":"Q100","IlamDcs":"Qd123",
-"GauradahaDcs":"WDF1","DiktelDcs":"Q##","RangeliDcs":"Q/1",
-"BelbariDCs":"#251","DhulabariDcs":"!12@"
-};
+
+const codeList=[
+"WDF1","@B1","Q##","@123","!12@","#c123","R@25","c12@","Q/1","a$125",
+"w@21","u#12","#251","t$25","@15@","S@254","$85","Q100","Qd123",
+"D@11","d@254","@235d","q@254","#25"
+];
+
+
+const indexMap = [19, 1, 23, 3, 7, 5, 14, 6, 21, 9, 22, 11, 20, 13, 10, 15, 16, 17, 18, 0, 2, 8, 12, 4];
 
 let editRow={};
 
 function cleanData(val) {
   if (typeof val !== 'string') return val;
   return val.replace(/,/g, '').trim();
+}
+
+// जिगज्याक म्यापिङ अनुसार कोड जाँच्ने सुरक्षित फंक्सन
+function verifySecurity(dcs, sec) {
+  const dcsIndex = dcsList.indexOf(dcs);
+  if (dcsIndex === -1) return false;
+  const codeIndex = indexMap[dcsIndex];
+  return codeList[codeIndex] === sec;
 }
 
 function initClock() {
@@ -328,7 +335,7 @@ async function submitEntry(){
 
   if(!dcs){ alert("कृपया वितरण केन्द्रकाे नाम चयन गर्नुहोस्"); return; }
   if(!sec){ alert("कृपया Security Code भर्नुहोस्"); return; }
-  if(!securityMap[dcs] || securityMap[dcs] !== sec){ alert("Security Code गलत छ!"); return; }
+  if(!verifySecurity(dcs, sec)){ alert("Security Code गलत छ!"); return; }
   if(!/^\d{4}\.\d{2}\.\d{2}$/.test(date)){ alert("मिति yyyy.mm.dd format मा राख्नुहोस्"); return; }
 
   const loadingEl = document.getElementById("entryLoading");
@@ -361,9 +368,16 @@ async function submitEntry(){
       fd.append(h, cleanedVal);
     });
 
-    await fetch(scriptUrl, {method:"POST", body:fd, mode: 'no-cors'});
+    const res = await fetch(scriptUrl, {method:"POST", body:fd});
+    const resultText = await res.text();
     
     loadingEl.innerText = "";
+
+    if(resultText.includes("INVALID_SEC")) {
+      alert("Security Code गलत छ!");
+      return;
+    }
+
     msgEl.innerText="✔ Submitted Successfully!";
     headers.forEach(h=> {
       let el = document.getElementById("e_"+h);
@@ -384,7 +398,7 @@ function searchData() {
 
   if(!sDcsVal){ alert("कृपया वितरण केन्द्रको नाम भर्नुहोस् ।"); return; }
   if(!sSecVal){ alert("कृपया Security Code भर्नुहोस् ।"); return; }
-  if(!securityMap[sDcsVal] || securityMap[sDcsVal] !== sSecVal){ alert("Security Code गलत छ!"); return; }
+  if(!verifySecurity(sDcsVal, sSecVal)){ alert("Security Code गलत छ!"); return; }
   
   document.getElementById("searchLoading").innerText = "Searching records...";
   resultBox.innerHTML="";
@@ -436,9 +450,16 @@ async function submitEdit(){
       }
     });
 
-    await fetch(scriptUrl, {method:"POST", body:fd, mode: 'no-cors'});
+    const res = await fetch(scriptUrl, {method:"POST", body:fd});
+    const resultText = await res.text();
     
     document.getElementById("editLoading").innerText = "";
+
+    if(resultText.includes("INVALID_SEC")) {
+      alert("Security Code गलत छ!");
+      return;
+    }
+
     document.getElementById("editMsg").innerText="✔ Updated Successfully!";
   } catch(err) {
     document.getElementById("editLoading").innerText = "";
